@@ -24,11 +24,6 @@ resource "aws_s3_bucket_website_configuration" "this" {
   }
 }
 
-locals {
-  s3_origin_id   = "${var.project_name}-origin"
-  s3_domain_name = "${var.project_name}.s3-website-${var.region}.amazonaws.com"
-}
-
 resource "aws_acm_certificate" "this" {
   domain_name               = var.domain_name
   subject_alternative_names = ["*.${var.domain_name}"]
@@ -46,6 +41,11 @@ resource "aws_acm_certificate" "this" {
 
 resource "aws_route53_zone" "main" {
   name = var.domain_name
+
+  tags = {
+    Project = var.project_name
+    Domain  = var.domain_name
+  }
 }
 
 resource "aws_route53_record" "this" {
