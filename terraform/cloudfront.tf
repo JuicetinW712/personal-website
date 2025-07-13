@@ -1,12 +1,14 @@
 resource "aws_cloudfront_distribution" "s3" {
   origin {
-    domain_name = aws_s3_bucket_website_configuration.this.website_endpoint
-    origin_id   = local.s3_origin_id
+    domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
+    origin_id                = local.s3_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.s3_access.id
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
+  price_class         = "PriceClass_100"
 
   default_cache_behavior {
     target_origin_id = local.s3_origin_id
@@ -22,7 +24,7 @@ resource "aws_cloudfront_distribution" "s3" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 3600
+    min_ttl                = 0
     default_ttl            = 86400    # 1 day
     max_ttl                = 31536000 # 1 year
   }
@@ -34,13 +36,13 @@ resource "aws_cloudfront_distribution" "s3" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.this.arn
+    acm_certificate_arn      = aws_acm_certificate.this.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
-
-  price_class = "PriceClass_100"
 }
 
-resource "aws_cloudfront_origin_access_control" "example" {
+resource "aws_cloudfront_origin_access_control" "s3_access" {
   name                              = "${var.project_name}-oac"
   description                       = "OAC for cloudfront access to s3"
   origin_access_control_origin_type = "s3"
