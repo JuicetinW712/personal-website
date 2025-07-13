@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "read_access" {
   statement {
     principals {
       type = "Service"
-      identifiers = ["cloudfront.aws.com"]
+      identifiers = ["cloudfront.amazonaws.com"]
     }
 
     actions = [
@@ -24,10 +24,16 @@ data "aws_iam_policy_document" "read_access" {
       aws_s3_bucket.this.arn,
       "${aws_s3_bucket.this.arn}/*"
     ]
+
+    condition {
+      test =  "StringEquals"
+      variable = "aws:SourceArn"
+      values = [aws_cloudfront_distribution.s3.arn]
+    }
   }
 }
 
-resource "aws_s3_bucket_policy" "public_read_policy" {
+resource "aws_s3_bucket_policy" "cloudfront_read_policy" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.read_access.json
 
