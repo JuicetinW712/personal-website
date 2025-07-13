@@ -1,5 +1,11 @@
+resource "random_string" "bucket_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.project_name}-bucket"
+  bucket = "${var.project_name}-bucket-${random_string.bucket_suffix}"
 
   tags = {
     Project = var.project_name
