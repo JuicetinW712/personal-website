@@ -5,6 +5,8 @@ resource "aws_cloudfront_distribution" "s3" {
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_access.id
   }
 
+  aliases = [var.domain_name, "www.${var.domain_name}"]
+
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"

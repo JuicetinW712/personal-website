@@ -7,24 +7,8 @@ resource "aws_s3_bucket" "this" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  routing_rule {
-    condition {
-      http_error_code_returned_equals = "404"
-    }
-    redirect {
-      replace_key_with = "index.html"
-    }
-  }
-}
-
 resource "aws_acm_certificate" "this" {
+  provider                  = aws.us-east-1
   domain_name               = var.domain_name
   subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "DNS"
@@ -39,6 +23,12 @@ resource "aws_acm_certificate" "this" {
   }
 }
 
+resource "aws_acm_certificate_validation" "cert_validation" {
+  provider                = aws.us-east-1
+  certificate_arn         = aws_acm_certificate.this.arn
+  validation_record_fqdns = [for record in aws_route53_record.acm_validation : record.fqdn]
+}
+
 resource "aws_route53_zone" "main" {
   name = var.domain_name
 
@@ -48,7 +38,7 @@ resource "aws_route53_zone" "main" {
   }
 }
 
-resource "aws_route53_record" "this" {
+resource "aws_route53_record" "acm_validation" {
   for_each = {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
@@ -63,6 +53,30 @@ resource "aws_route53_record" "this" {
   ttl             = 60
   type            = each.value.type
   zone_id         = aws_route53_zone.main.zone_id
+}
+
+resource "aws_route53_record" "apex" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = var.domain_name
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.s3.domain_name
+    zone_id                = aws_cloudfront_distribution.s3.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "www.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.s3.domain_name
+    zone_id                = aws_cloudfront_distribution.s3.hosted_zone_id
+    evaluate_target_health = false
+  }
 }
 
 

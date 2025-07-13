@@ -12,7 +12,7 @@ resource "aws_s3_public_access_block" "deny_public_access" {
 data "aws_iam_policy_document" "read_access" {
   statement {
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
 
@@ -26,9 +26,9 @@ data "aws_iam_policy_document" "read_access" {
     ]
 
     condition {
-      test =  "StringEquals"
+      test     = "StringEquals"
       variable = "aws:SourceArn"
-      values = [aws_cloudfront_distribution.s3.arn]
+      values   = [aws_cloudfront_distribution.s3.arn]
     }
   }
 }
