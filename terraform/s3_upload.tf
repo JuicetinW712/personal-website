@@ -1,32 +1,9 @@
-resource "aws_s3_object" "html_files" {
-  for_each = fileset("app/", "*.html")
+resource "aws_s3_object" "files_to_upload" {
+  for_each = local.files_to_upload
 
-  key          = each.value
   bucket       = aws_s3_bucket.this.id
-  source       = "app/${each.value}"
-  content_type = "text/html"
-  etag         = filemd5("app/${each.value}")
-  acl          = "public-read"
-}
-
-resource "aws_s3_object" "css_files" {
-  for_each = fileset("app/", "*.css")
-
-  key          = each.value
-  bucket       = aws_s3_bucket.this.id
-  source       = "app/${each.value}"
-  content_type = "text/css"
-  etag         = filemd5("app/${each.value}")
-  acl          = "public-read"
-}
-
-resource "aws_s3_object" "js_files" {
-  for_each = fileset("app/", "*.js")
-
-  key          = each.value
-  bucket       = aws_s3_bucket.this.id
-  source       = "app/${each.value}"
-  content_type = "application/javascript"
-  etag         = filemd5("app/${each.value}")
-  acl          = "public-read"
+  key          = each.key
+  source       = "${path.module}/app/${each.key}"
+  content_type = each.value
+  etag         = filemd5("${path.module}/app/${each.key}")
 }
