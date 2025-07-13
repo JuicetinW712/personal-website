@@ -3,11 +3,11 @@ variable "project_name" {
 }
 
 variable "region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
 variable "domain_name" {
   description = "Domain name for website"
-  type = string
+  type        = string
 }
