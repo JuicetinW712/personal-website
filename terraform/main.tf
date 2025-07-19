@@ -72,15 +72,10 @@ resource "aws_cloudfront_distribution" "s3" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.this.arn
+    acm_certificate_arn      = aws_acm_certificate_validation.cert_validation.certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
-  
-  # Cert needs to be validated before it can be used
-  depends_on = [
-    aws_acm_certificate_validation.cert_validation
-  ]
 }
 
 resource "aws_cloudfront_origin_access_control" "s3_access" {
