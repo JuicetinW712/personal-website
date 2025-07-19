@@ -1,5 +1,5 @@
 # Disables public access to s3
-resource "aws_s3_public_access_block" "deny_public_access" {
+resource "aws_s3_bucket_public_access_block" "deny_public_access" {
   bucket = aws_s3_bucket.this.id
 
   block_public_acls       = true
@@ -37,5 +37,5 @@ resource "aws_s3_bucket_policy" "cloudfront_read_policy" {
   bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.read_access.json
 
-  depends_on = [aws_s3_public_access_block.deny_public_access]
+  depends_on = [aws_s3_bucket_public_access_block.deny_public_access]
 }

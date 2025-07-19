@@ -9,6 +9,6 @@ resource "aws_s3_object" "files_to_upload" {
 
   depends_on = [
     aws_s3_bucket_policy.cloudfront_read_policy,
-    aws_s3_public_access_block.deny_public_access
+    aws_s3_bucket_public_access_block.deny_public_access
   ]
 }
