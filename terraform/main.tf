@@ -13,6 +13,13 @@ resource "aws_s3_bucket" "this" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_acm_certificate" "this" {
   provider                  = aws.us-east-1
   domain_name               = var.domain_name
@@ -53,19 +60,9 @@ resource "aws_cloudfront_distribution" "s3" {
     target_origin_id = local.s3_origin_id
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 86400    # 1 day
-    max_ttl                = 31536000 # 1 year
+  
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
   }
 
   restrictions {
