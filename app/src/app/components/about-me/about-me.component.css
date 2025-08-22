@@ -1,0 +1,17 @@
+.about-me {
+  display: flex;
+}
+
+.about-me img {
+  margin-right: 50px;
+  width: 320px;
+  height: 320px;
+  border-radius: 100%;
+}
+
+@media (max-width: 768px) {
+  .about-me {
+    display: flex;
+    flex-direction: column;
+  }
+}

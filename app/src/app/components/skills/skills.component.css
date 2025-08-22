@@ -1,0 +1,41 @@
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between each skill row */
+}
+
+.skill-category {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center title with badges */
+  gap: 20px; /* Gap between title and badges */
+}
+
+.skill-category h3 {
+  font-size: 1.1em;
+  color: #1a1a1a;
+  font-weight: 600;
+  flex-basis: 160px; /* Fixed width for the title */
+  flex-shrink: 0; /* Prevent title from shrinking */
+  margin: 0;
+}
+
+.skill-list {
+  display: flex;
+  flex: 1; /* Allow the list to take remaining space */
+  flex-wrap: wrap;
+  gap: 8px; /* Gap between badges */
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .skill-category {
+    flex-direction: column; /* Stack title on top of badges */
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .skill-category h3 {
+    flex-basis: auto; /* Reset basis for stacking */
+  }
+}
