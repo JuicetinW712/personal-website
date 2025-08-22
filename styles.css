@@ -103,7 +103,8 @@ body {
   gap: 15px; /* Space between logo and text block */
 }
 
-.company-logo {
+.company-logo,
+.university-logo {
   height: 45px;
   width: 45px;
   flex-shrink: 0;
@@ -116,7 +117,9 @@ body {
   margin-bottom: 4px;
 }
 
-.item-company {
+.item-company,
+.item-location {
+  display: inline;
   font-size: 1.1em;
   color: #666;
   font-weight: 500;
@@ -129,10 +132,9 @@ body {
   white-space: nowrap;
 }
 
-.item-location {
-  font-size: 1em;
-  color: #888;
-  margin-bottom: 16px;
+.item-location::before {
+  content: "•";
+  margin: 0 8px;
 }
 
 .item-description {
