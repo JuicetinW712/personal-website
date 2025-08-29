@@ -4,19 +4,19 @@ resource "random_string" "bucket_suffix" {
   upper   = false
 }
 
-resource "aws_s3_bucket" "this" {
-  bucket = "${var.project_name}-bucket-${random_string.bucket_suffix.result}"
+module "s3" {
+  source                  = "./modules/s3"
+  bucket_name             = "${var.project_name}-bucket-${random_string.bucket_suffix.result}"
+  bucket_policy           = data.aws_iam_policy_document.read_access.json
+  
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 
   tags = {
     Project = var.project_name
     Domain  = var.domain_name
-  }
-}
-
-resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.this.id
-  versioning_configuration {
-    status = "Enabled"
   }
 }
 
@@ -57,11 +57,11 @@ resource "aws_cloudfront_distribution" "s3" {
   price_class         = "PriceClass_100"
 
   default_cache_behavior {
-    target_origin_id = local.s3_origin_id
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    target_origin_id       = local.s3_origin_id
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-  
+
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
   }
 
