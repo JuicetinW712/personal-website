@@ -1,3 +1,5 @@
+data "aws_default_tags" "tags" {}
+
 resource "aws_cloudfront_origin_access_control" "s3_access" {
   name                              = "${var.project_name}-oac"
   description                       = "OAC for CloudFront access to S3"
@@ -40,4 +42,6 @@ resource "aws_cloudfront_distribution" "s3" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
+
+  tags = merge(var.tags, data.aws_default_tags.tags)
 }
