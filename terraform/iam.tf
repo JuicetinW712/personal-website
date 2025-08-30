@@ -11,14 +11,14 @@ data "aws_iam_policy_document" "read_access" {
     ]
 
     resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
+      module.s3.bucket_arn,
+      "${module.s3.bucket_arn}/*"
     ]
 
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
-      values   = [aws_cloudfront_distribution.s3.arn]
+      values   = [module.cloudfront.cloudfront_arn]
     }
   }
 }

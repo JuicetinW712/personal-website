@@ -8,15 +8,15 @@ output "www_website_url" {
   value       = "https://www.${var.domain_name}"
 }
 
-output "cloudfront_distribution_id" {
-  description = "CloudFront distribution ID"
-  value       = aws_cloudfront_distribution.s3.id
-}
+# output "cloudfront_distribution_id" {
+#   description = "CloudFront distribution ID"
+#   value       = aws_cloudfront_distribution.s3.id
+# }
 
-output "cloudfront_domain_name" {
-  description = "CloudFront distribution domain name"
-  value       = aws_cloudfront_distribution.s3.domain_name
-}
+# output "cloudfront_domain_name" {
+#   description = "CloudFront distribution domain name"
+#   value       = aws_cloudfront_distribution.s3.domain_name
+# }
 
 # output "s3_bucket_name" {
 #   description = "Name of the S3 bucket"

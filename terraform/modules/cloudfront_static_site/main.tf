@@ -9,7 +9,7 @@ resource "aws_cloudfront_origin_access_control" "s3_access" {
 resource "aws_cloudfront_distribution" "s3" {
   origin {
     domain_name              = var.bucket_regional_domain_name
-    origin_id                = var.s3_origin_id
+    origin_id                = "${var.project_name}-origin"
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_access.id
   }
 
@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "s3" {
   price_class         = "PriceClass_100"
 
   default_cache_behavior {
-    target_origin_id       = var.s3_origin_id
+    target_origin_id       = "${var.project_name}-origin"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"

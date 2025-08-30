@@ -13,12 +13,13 @@ variable "bucket_regional_domain_name" {
   type        = string
 }
 
-variable "s3_origin_id" {
-  description = "The origin ID for the S3 bucket"
+variable "certificate_arn" {
+  description = "The ARN of the ACM certificate. Must be located in us-east-1 region"
   type        = string
 }
 
-variable "certificate_arn" {
-  description = "The ARN of the ACM certificate"
-  type        = string
+variable "tags" {
+  description = "Additional tags (i.e Purpose)"
+  type        = map(string)
+  default     = {}
 }
