@@ -35,39 +35,28 @@ module "cloudfront" {
 }
 
 module "acm" {
-  
+  source = "./modules/acm"
+
+  domain_name             = var.domain_name
+  validation_record_fqdns = module.route53.validation_record_fqdns
+
+  providers = {
+    aws = aws.us-east-1
+  }
 }
 
 module "route53" {
-  source                    = "./modules/route53"
+  source = "./modules/route53"
 
   project_name              = var.project_name
   domain_name               = var.domain_name
   domain_validation_options = module.acm.certificate_validation_options
   cloudfront_domain_name    = module.cloudfront.cloudfront_domain_name
   cloudfront_hosted_zone_id = module.cloudfront.cloudfront_hosted_zone_id
-}
-
-resource "aws_acm_certificate" "this" {
-  provider                  = aws.us-east-1
-  domain_name               = var.domain_name
-  subject_alternative_names = ["*.${var.domain_name}"]
-  validation_method         = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
 
   tags = {
     Project = var.project_name
     Domain  = var.domain_name
   }
 }
-
-resource "aws_acm_certificate_validation" "cert_validation" {
-  provider                = aws.us-east-1
-  certificate_arn         = aws_acm_certificate.this.arn
-  validation_record_fqdns = [for record in aws_route53_record.acm_validation : record.fqdn]
-}
-
 
