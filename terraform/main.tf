@@ -47,17 +47,6 @@ module "cloudfront" {
   }
 }
 
-# module "acm" {
-#   source = "./modules/acm"
-
-#   domain_name             = var.domain_name
-#   validation_record_fqdns = module.route53.validation_record_fqdns
-
-#   providers = {
-#     aws = aws.us-east-1
-#   }
-# }
-
 resource "aws_acm_certificate" "this" {
   domain_name               = var.domain_name
   subject_alternative_names = ["*.${var.domain_name}"]
