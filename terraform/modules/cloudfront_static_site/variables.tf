@@ -8,6 +8,12 @@ variable "domain_name" {
   type        = string
 }
 
+variable "origin_path" {
+  description = "Path within the S3 bucket to serve from"
+  type        = string
+  default     = "/"
+}
+
 variable "bucket_regional_domain_name" {
   description = "The regional domain name of the S3 bucket"
   type        = string

@@ -5,8 +5,8 @@ resource "random_string" "bucket_suffix" {
 }
 
 module "s3" {
-  source        = "./modules/s3"
-  bucket_name   = "${var.project_name}-bucket-${random_string.bucket_suffix.result}"
+  source      = "./modules/s3"
+  bucket_name = "${var.project_name}-bucket-${random_string.bucket_suffix.result}"
 
   block_public_acls       = true
   block_public_policy     = true
@@ -24,14 +24,12 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.read_access.json
 }
 
-# module "upload" {
-#   source = "./modules/s3_upload"
+module "upload" {
+  source = "./modules/s3_upload"
 
-#   bucket_id              = module.s3.bucket_id
-#   public_access_block_id = module.s3.public_access_block_id
-#   bucket_policy_id       = module.s3.bucket_policy_id
-#   source_path            = "../app"
-# }
+  bucket_id   = module.s3.bucket_id
+  source_path = "../app"
+}
 
 module "cloudfront" {
   source = "./modules/cloudfront_static_site"
@@ -66,7 +64,6 @@ resource "aws_acm_certificate_validation" "cert_validation" {
   certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = module.route53.validation_record_fqdns
 }
-
 
 
 module "route53" {

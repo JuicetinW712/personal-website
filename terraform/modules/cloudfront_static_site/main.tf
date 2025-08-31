@@ -12,6 +12,7 @@ resource "aws_cloudfront_distribution" "s3" {
   origin {
     domain_name              = var.bucket_regional_domain_name
     origin_id                = "${var.project_name}-origin"
+    origin_path              = var.origin_path
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_access.id
   }
 
