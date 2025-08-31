@@ -28,7 +28,7 @@ module "upload" {
   source = "./modules/s3_upload"
 
   bucket_id   = module.s3.bucket_id
-  source_path = "../app"
+  source_path = "${path.module}/../app" 
 }
 
 module "cloudfront" {
