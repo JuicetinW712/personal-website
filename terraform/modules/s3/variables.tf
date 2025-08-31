@@ -3,12 +3,6 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "bucket_policy" {
-  description = "(Optional) Bucket policy string in JSON format"
-  type        = string
-  default     = null
-}
-
 variable "block_public_acls" {
   description = "(Optional) Whether to block public ACLs"
   type        = bool

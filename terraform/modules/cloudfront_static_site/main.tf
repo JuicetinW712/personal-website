@@ -1,4 +1,4 @@
-data "aws_default_tags" "tags" {}
+data "aws_default_tags" "default" {}
 
 resource "aws_cloudfront_origin_access_control" "s3_access" {
   name                              = "${var.project_name}-oac"
@@ -43,5 +43,5 @@ resource "aws_cloudfront_distribution" "s3" {
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
-  tags = merge(var.tags, data.aws_default_tags.tags)
+  tags = merge(var.tags, data.aws_default_tags.default.tags)
 }

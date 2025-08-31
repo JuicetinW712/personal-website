@@ -38,7 +38,7 @@ output "route53_zone_id" {
 #   value       = aws_route53_zone.main.name_servers
 # }
 
-output "acm_certificate_arn" {
-  description = "ARN of the ACM certificate"
-  value       = module.acm.certificate_arn
-}
+# output "acm_certificate_arn" {
+#   description = "ARN of the ACM certificate"
+#   value       = module.acm.certificate_arn
+# }

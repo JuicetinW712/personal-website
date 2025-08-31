@@ -7,7 +7,6 @@ resource "random_string" "bucket_suffix" {
 module "s3" {
   source        = "./modules/s3"
   bucket_name   = "${var.project_name}-bucket-${random_string.bucket_suffix.result}"
-  bucket_policy = data.aws_iam_policy_document.read_access.json
 
   block_public_acls       = true
   block_public_policy     = true
@@ -19,6 +18,20 @@ module "s3" {
     Domain  = var.domain_name
   }
 }
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = module.s3.bucket_id
+  policy = data.aws_iam_policy_document.read_access.json
+}
+
+# module "upload" {
+#   source = "./modules/s3_upload"
+
+#   bucket_id              = module.s3.bucket_id
+#   public_access_block_id = module.s3.public_access_block_id
+#   bucket_policy_id       = module.s3.bucket_policy_id
+#   source_path            = "../app"
+# }
 
 module "cloudfront" {
   source = "./modules/cloudfront_static_site"
@@ -34,23 +47,45 @@ module "cloudfront" {
   }
 }
 
-module "acm" {
-  source = "./modules/acm"
+# module "acm" {
+#   source = "./modules/acm"
 
-  domain_name             = var.domain_name
-  validation_record_fqdns = module.route53.validation_record_fqdns
+#   domain_name             = var.domain_name
+#   validation_record_fqdns = module.route53.validation_record_fqdns
 
-  providers = {
-    aws = aws.us-east-1
+#   providers = {
+#     aws = aws.us-east-1
+#   }
+# }
+
+resource "aws_acm_certificate" "this" {
+  domain_name               = var.domain_name
+  subject_alternative_names = ["*.${var.domain_name}"]
+  validation_method         = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Project = var.project_name
+    Domain  = var.domain_name
   }
 }
+
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.this.arn
+  validation_record_fqdns = module.route53.validation_record_fqdns
+}
+
+
 
 module "route53" {
   source = "./modules/route53"
 
   project_name              = var.project_name
   domain_name               = var.domain_name
-  domain_validation_options = module.acm.certificate_validation_options
+  domain_validation_options = aws_acm_certificate.this.domain_validation_options
   cloudfront_domain_name    = module.cloudfront.cloudfront_domain_name
   cloudfront_hosted_zone_id = module.cloudfront.cloudfront_hosted_zone_id
 
